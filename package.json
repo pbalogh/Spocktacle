@@ -1,5 +1,5 @@
 {
-    "name": "Hub",
+    "name": "Spocktacular",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -72,5 +72,5 @@
         "tslint-config-prettier": "^1.18.0",
         "tslint-config-standard": "^8.0.1"
     },
-    "homepage": "/loyaltyhub/assets"
+    "homepage": "."
 }
