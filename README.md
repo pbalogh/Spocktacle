@@ -1,3 +1,5 @@
+ I'm working my way through Graham Priest's "An Introduction to Non-Classical Logics" (loving it!) and decided to post an implementation of tableau solving per his description.
+
 Here's a live demo:
 
 https://pbalogh.github.io/Spocktacle/
