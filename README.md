@@ -10,6 +10,14 @@ Usually, unless you're solving a 2SAT (or 3SAT!) problem, you'll want the left b
 
 (Generating a tableau proves your sentence by actually trying to prove the opposite of it -- a kind of "reductio ad absurdum". If every branch in its tree reveals a contradiction -- that is, a requirement that one of the variables must be true even though an earlier branch required it to be false, or vice versa -- then obviously there's no hope for a true resolution. And, if the negation of your sentence is false, your sentence must evaluate to "true.")
 
+Or, to put it in common-sense terms:
+
+"Sure, you can find a way for your sentence to be true, but that doesn't mean it's *always* true. The real question is, can you find any way that your sentence is *false*? If so, then we're getting somewhere."
+
+So, to find some way your sentence S is false, we'll set out to prove !S is true.
+
+If we can't do it (that is, if all our branches and attempts lead to internal contradictions like "A is true -- no, wait, A is false") then your sentence is obviously *never* false.
+
 Closed branches are marked with black boxes; white boxes indicate a branch that is "open" -- that is, that contain valid children or descendent branches.
 
 ## Available Scripts
