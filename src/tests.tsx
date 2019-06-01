@@ -100,10 +100,19 @@ export const testParserAndOperators = () => {
         "!A": {
           className: "Not",
           elements: [
-            { className: "Not", elements: "!", syntaxmatch: "UNARYOPERATOR" },
+            {
+              className: "Not",
+              elements: "!",
+              syntaxmatch: "UNARYOPERATOR"
+            },
             {
               className: "Variable",
-              elements: [{ elements: "A", syntaxmatch: "VARIABLE" }],
+              elements: [
+                {
+                  elements: "A",
+                  syntaxmatch: "VARIABLE"
+                }
+              ],
               syntaxmatch: "FORMULA"
             }
           ],

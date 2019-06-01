@@ -354,6 +354,8 @@ export default class LogicParser {
     // !A is UNARYOPERATOR, FORMULA -- so it needs to get the classref from the first object.
     const className: string = matchedPattern.getClassName(matchedTokens);
 
+    console.log("className is ", className);
+
     const formula = new classRepository[className](
       matchedTokens,
       matchedPattern.syntaxmatch,

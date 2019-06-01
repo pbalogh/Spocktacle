@@ -1,11 +1,11 @@
 import { INecessitiesAndPossibilities, IStateDelta } from "App";
 import { IMatchable, IStateInterface } from "../Token";
-
 export class Formula implements IMatchable {
   public elements: IMatchable[];
   public syntaxmatch: string;
-  public className: any;
+  public className: string;
   public myString?: string;
+  public isModal: boolean = false;
   constructor(elements: IMatchable[], syntaxmatch: string, className: string) {
     this.elements = elements;
     this.syntaxmatch = syntaxmatch;
@@ -15,6 +15,8 @@ export class Formula implements IMatchable {
   public evaluate = (state: IStateInterface): boolean => {
     return true;
   };
+
+  public getNewWorldVersion = (): IMatchable => this;
 
   public getVarName = (): string | null => {
     return null;

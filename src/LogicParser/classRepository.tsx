@@ -6,3 +6,5 @@ export * from "./formulae/Not";
 export * from "./formulae/Parenthetical";
 export * from "./formulae/Then";
 export * from "./formulae/Iff";
+export * from "./formulae/AllWorlds";
+export * from "./formulae/SomeWorlds";

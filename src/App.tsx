@@ -4,6 +4,7 @@ import styles from "./App.module.scss";
 
 import Draggable from "Draggable";
 import EvaluationNode from "LogicParser/EvaluationNode";
+import EvaluationNodeModal from "LogicParser/EvaluationNodeModal";
 import { Not } from "LogicParser/formulae/Not";
 import LogicParser from "LogicParser/LogicParser";
 import NodeComponent from "NodeComponent";
@@ -20,9 +21,13 @@ const stringify = require("json-stable-stringify");
 
 // TODO: When Using Not.wrapInNot, if it's a complex formula (i.e., not a Variable or a Not), then use parentheses!!
 
-// TODO: When a node wants to see if it is closed, its children array hasn't had all the child nodes pushed on it yet --
-// because the child node is evaluating itself before it is pushed onto the array!
-// And because of that, it is cascading upward.
+// TODO: When EvaluationNodeModal prints a necessity to screen,
+// we need to append the world number.
+
+// And when we create a new world, we need to print a Relation object.
+// (And augment our totalHeight when we do so.)
+
+// TODO: Create a NodeComponentModal class.
 
 export interface IStateDelta {
   [key: string]: boolean;
@@ -37,6 +42,7 @@ export interface IJSONofIMatchable {
   elements: string | Array<IJSONofIMatchable | IMatchable>;
   syntaxmatch: string;
   className?: string;
+  // getNewWorldVersion(): IMatchable;
 }
 
 interface IAppState {
@@ -47,6 +53,8 @@ interface IAppState {
 
 class App extends React.Component<object, IAppState> {
   public sentences = [
+    "((<>p && <>!q) -> ( <>[]<>p))",
+    "([](A->B)&&[](B->C))->[](A->C)",
     "(a||!b)&&(!a||b)&&(!a||!b)&&(a||!c)",
     "((A<->B)||B||A)",
     "((p->q)||(r->q))->((p||r)->q)",
@@ -82,16 +90,31 @@ class App extends React.Component<object, IAppState> {
       if (negateIt) {
         nodeToActuallyEvaluate = Not.wrapInNot(root);
       }
-      const node = new EvaluationNode(
-        { [nodeToActuallyEvaluate.toString()]: nodeToActuallyEvaluate },
-        stateValues,
-        undefined,
-        false
-      );
+
+      let node;
+
+      if (this.isModalSentence(sentence)) {
+        node = new EvaluationNodeModal(
+          { [nodeToActuallyEvaluate.toString()]: nodeToActuallyEvaluate },
+          stateValues,
+          undefined,
+          false
+        );
+      } else {
+        node = new EvaluationNode(
+          { [nodeToActuallyEvaluate.toString()]: nodeToActuallyEvaluate },
+          stateValues,
+          undefined,
+          false
+        );
+      }
       node.updateStateAndGenerateChildren();
       this.setState({ sentence, stateValues, node });
     });
   };
+
+  public isModalSentence = (sentence: string) =>
+    sentence.includes("[]") || sentence.includes("<>");
 
   public render() {
     const { sentence, stateValues, node } = this.state;

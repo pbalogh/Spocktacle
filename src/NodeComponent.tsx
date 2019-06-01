@@ -147,18 +147,22 @@ export default class NodeComponent extends React.Component<
     return BLACK;
   };
 
-  public getTextForNecessity = (necessity: IMatchable, index: number) => {
+  public getTextElementForNecessity = (
+    necessity: IMatchable,
+    index: number,
+    suffix: string = ""
+  ) => {
     const { leftOffsets } = this.state;
 
     return (
       <text
-        key={necessity.toString()}
+        key={this.getNecessityText(necessity)}
         fill={this.getColorShowingStateViolation(necessity)}
-        transform={`translate(${leftOffsets[necessity.toString()] ||
+        transform={`translate(${leftOffsets[this.getNecessityText(necessity)] ||
           0} ${index * NODEHEIGHT})`}
-        ref={r => (this.elementref[necessity.toString()] = r)}
+        ref={r => (this.elementref[this.getNecessityText(necessity)] = r)}
       >
-        {necessity.toString()}
+        {this.getNecessityText(necessity) + suffix}
       </text>
     );
   };
@@ -170,14 +174,21 @@ export default class NodeComponent extends React.Component<
     );
   };
 
+  public getNecessityText = (necessity: IMatchable) => {
+    const { node } = this.props;
+    return necessity.toString() + (node.isModal ? ", " + node.worldNumber : "");
+  };
+
   public render() {
     const { node, x, y } = this.props;
     const { expanded, closed } = this.state;
 
+    console.log("In render, node.isModal is ", node.isModal);
+
     const necessities: IMatchableMap = node.necessities;
     const totalHeight: number = Object.keys(necessities).length * NODEHEIGHT;
     const myNecessityText = Object.values(necessities).map((n, i) =>
-      this.getTextForNecessity(n as IMatchable, i)
+      this.getTextElementForNecessity(n as IMatchable, i)
     );
 
     const { childWidths } = this.state;

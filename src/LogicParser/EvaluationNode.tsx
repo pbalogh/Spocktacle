@@ -15,6 +15,8 @@ export default class EvaluationNode {
   public stateViolations: IStateDelta = {};
   public overallColor = BLACK;
   public closed: boolean = false;
+  public isModal: boolean = false;
+  public worldNumber: number = 0;
   constructor(
     public necessities: IMatchableMap,
     state: IStateInterface,
@@ -24,7 +26,6 @@ export default class EvaluationNode {
     this.children = [];
     this.state = { ...state };
     if (immediateMode) {
-      console.log("About to updatestate");
       this.updateStateAndGenerateChildren();
     }
   }
@@ -32,7 +33,6 @@ export default class EvaluationNode {
   public toString = () => Object.keys(this.necessities).join();
 
   public respondToStateViolation(variableName: string) {
-    console.log("STATE VIOLATION FOR variableName ", variableName);
     this.stateViolations[variableName] = true;
     this.overallColor = RED;
     this.closed = true;
@@ -47,44 +47,22 @@ export default class EvaluationNode {
 
   public checkIfIAmClosed = () => {
     // Now let's see if our node is closed.
-    if (this.toString() === "(A||!C),!A") {
-      console.log("In checkIfIAmClosed for node ", this.toString());
-      console.log("this.children is ", this.children);
-      console.log("this.parent is ", this.parent);
-    }
+
     if (this.children.length > 0) {
-      if (this.toString() === "(A||!C),!A") {
-        console.log("I do have children ");
-      }
       this.closed = true;
       for (const child of this.children) {
-        if (this.toString() === "(A||!C),!A") {
-          console.log("child.closed is ", child.closed);
-        }
         if (!child.closed) {
-          console.log("NOT CLOSED: " + this.toString());
-          console.log("Because child " + child.toString() + " isn't closed");
           this.closed = false;
           break;
         }
       }
     }
     if (this.parent) {
-      if (this.toString() === "(!Q->(R&&!S)),(P||Q),P&&!!Q") {
-        console.log(
-          "(!Q->(R&&!S)),(P||Q),P&&!!Q is asking my parent if it is closed"
-        );
-      }
       this.parent.checkIfIAmClosed();
     }
   };
 
   public respondToFutureStateViolation(variableName: string) {
-    console.log("FUTURE STATE VIOLATION FOR variableName ", variableName);
-    if (this.toString() === "(P<->!!Q)&&(!Q->(R&&!S)),(S->(P||Q)),(S&&Q),!P") {
-      console.log("respondToFutureStateViolation for node ", this.toString());
-      console.log("this.children is ", this.children);
-    }
     this.futureStateViolations[variableName] = true;
     this.overallColor = GREEN;
     this.checkIfIAmClosed();
@@ -124,7 +102,6 @@ export default class EvaluationNode {
     for (const matchable of Object.values(this.necessities)) {
       const necessitatedStateDelta: IStateDelta | null = (matchable as IMatchable).getStateDelta();
       if (necessitatedStateDelta !== null) {
-        console.log("Found a state delta: ", necessitatedStateDelta);
         const variableThatViolatesState = this.checkForStateViolation(
           necessitatedStateDelta
         );
@@ -152,12 +129,6 @@ export default class EvaluationNode {
     //
 
     const necessitiesThatDoNotDirectlyUpdateState = this.getNecessitiesThatDoNotDirectlyUpdateState();
-    if (
-      Object.keys(necessitiesThatDoNotDirectlyUpdateState).length ===
-      Object.keys(this.necessities).length
-    ) {
-      console.log("NO STATE DELTAS THERE");
-    }
 
     if (Object.keys(necessitiesThatDoNotDirectlyUpdateState).length === 0) {
       console.warn(
@@ -182,10 +153,6 @@ export default class EvaluationNode {
 
     if (formulaWithoutPossibilities !== null) {
       formulaToResolveForMyChildren = formulaWithoutPossibilities;
-      console.log(
-        "Found a formulaWithoutPossibilities! It's ",
-        formulaWithoutPossibilities
-      );
     } else {
       formulaToResolveForMyChildren = Object.values(
         necessitiesThatDoNotDirectlyUpdateState
@@ -205,16 +172,6 @@ export default class EvaluationNode {
 
     newNecessitiesAndProbabilitiesForChildren = formulaToResolveForMyChildren.toBeTrue();
 
-    console.log(
-      "newNecessitiesAndProbabilitiesForChildren are ",
-      newNecessitiesAndProbabilitiesForChildren
-    );
-
-    console.log(
-      "necessitiesThatDoNotDirectlyUpdateState are ",
-      necessitiesThatDoNotDirectlyUpdateState
-    );
-
     // Now combine the necessities we already had
     // with the ones we got from that child
     const necessitiesForAllChildren = {
@@ -222,13 +179,11 @@ export default class EvaluationNode {
       ...newNecessitiesAndProbabilitiesForChildren.necessities
     };
 
-    console.log("necessitiesForAllChildren are ", necessitiesForAllChildren);
     // If there are no possibilities, then we only need one kid
     if (
       Object.keys(newNecessitiesAndProbabilitiesForChildren.possibilities)
         .length === 0
     ) {
-      console.log("We only need one kid");
       const newNode = new EvaluationNode(
         necessitiesForAllChildren,
         { ...this.state },
@@ -252,9 +207,6 @@ export default class EvaluationNode {
           ...necessitiesForAllChildren,
           [matchable.toString()]: matchable
         };
-        console.log("Making a new EvaluationNode with state ", {
-          ...this.state
-        });
 
         const newChildNode = new EvaluationNode(
           necessitiesForThisChild,
