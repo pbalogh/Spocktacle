@@ -5,7 +5,7 @@ import { Formula } from "./Formula";
 import { Not } from "./Not";
 
 export class And extends Formula {
-  public static AndToken = new Token("&&", BINARYOPERATOR, "And");
+  public static AndToken = new Token(/^&&/, BINARYOPERATOR, "And", "&&");
   public static wrapInAnd(formula1: IMatchable, formula2: IMatchable): And {
     return new And([formula1, And.AndToken, formula2], FORMULA, "And");
   }

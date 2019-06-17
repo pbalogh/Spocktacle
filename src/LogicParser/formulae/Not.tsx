@@ -4,7 +4,7 @@ import { IMatchable, IStateInterface, Token } from "../Token";
 import { Formula } from "./Formula";
 
 export class Not extends Formula {
-  public static NotToken = new Token("!", UNARYOPERATOR, "Not");
+  public static NotToken = new Token(/^!/, UNARYOPERATOR, "Not", "!");
   public static wrapInNot(formula: IMatchable): Not {
     // Here's the funny thing:
     // if we're wrapping a Not object in another Not,

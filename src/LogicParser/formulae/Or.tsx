@@ -5,7 +5,7 @@ import { Formula } from "./Formula";
 import { Not } from "./Not";
 
 export class Or extends Formula {
-  public static OrToken = new Token("||", BINARYOPERATOR, "Or");
+  public static OrToken = new Token(/^\|\|/, BINARYOPERATOR, "Or", "||");
   public static wrapInOr(formula1: IMatchable, formula2: IMatchable): Or {
     return new Or([formula1, Or.OrToken, formula2], FORMULA, "Or");
   }

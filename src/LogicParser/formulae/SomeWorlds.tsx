@@ -6,7 +6,12 @@ import { ModalOperator } from "./ModalOperator";
 import { Not } from "./Not";
 
 export class SomeWorlds extends ModalOperator {
-  public static SomeWorldsToken = new Token("<>", UNARYOPERATOR, "SomeWorlds");
+  public static SomeWorldsToken = new Token(
+    /^<>/,
+    UNARYOPERATOR,
+    "SomeWorlds",
+    "<>"
+  );
   public static wrapInSomeWorlds(formula: IMatchable): SomeWorlds {
     // Here's the funny thing:
     // if we're wrapping a Not object in another Not,

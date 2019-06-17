@@ -53,8 +53,15 @@ interface IAppState {
 
 class App extends React.Component<object, IAppState> {
   public sentences = [
-    "((<>p && <>!q) -> ( <>[]<>p))",
-    "([](A->B)&&[](B->C))->[](A->C)",
+    // For now, modal logic isn't supported.
+    // The implementation of worlds feels inorganic right now,
+    // and should probably be a clean and simple extension
+    // of the idea of "state" that is currently in place.
+    // Perhaps *naming* my states to turn them into worlds
+    // is all that's needed.
+    //
+    // "((<>p && <>!q) -> ( <>[]<>p))",
+    // "([](A->B)&&[](B->C))->[](A->C)",
     "(a||!b)&&(!a||b)&&(!a||!b)&&(a||!c)",
     "((A<->B)||B||A)",
     "((p->q)||(r->q))->((p||r)->q)",
@@ -121,14 +128,7 @@ class App extends React.Component<object, IAppState> {
     return (
       <div className={styles.main}>
         <Draggable>
-          {node && (
-            <NodeComponent
-              x={window.innerWidth / 2}
-              y={120}
-              node={node}
-              parent={null}
-            />
-          )}
+          {node && <NodeComponent x={0} y={120} node={node} parent={null} />}
         </Draggable>
 
         <SentenceInput

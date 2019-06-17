@@ -7,7 +7,8 @@ import {
   BINARYOPERATOR,
   CLOSEPARENS,
   OPENPARENS,
-  UNARYOPERATOR
+  UNARYOPERATOR,
+  VARIABLE
 } from "./Constants";
 
 export interface IMatchable {
@@ -35,16 +36,14 @@ export interface IStateInterface {
 }
 
 export class Token implements IMatchable {
-  public elements: string;
-  public syntaxmatch: string;
-  public className: string;
   public isModal: boolean = false;
   public worldNumber: number = 0;
-  constructor(elements: string, syntaxmatch: string, className: any) {
-    this.elements = elements;
-    this.syntaxmatch = syntaxmatch;
-    this.className = className;
-  }
+  constructor(
+    public regex: RegExp,
+    public syntaxmatch: string,
+    public className: any,
+    public elements: string
+  ) {}
 
   public getNewWorldVersion = () => this;
 
@@ -72,15 +71,17 @@ export class Token implements IMatchable {
 }
 
 export const allKnownTokens: Token[] = [
-  new Token("->", BINARYOPERATOR, "Then"),
-  new Token("<->", BINARYOPERATOR, "Iff"),
-  new Token("(", OPENPARENS, "Formula"),
-  new Token(")", CLOSEPARENS, "Formula"),
-  new Token("!", UNARYOPERATOR, "Not"),
-  new Token("[]", UNARYOPERATOR, "AllWorlds"),
-  new Token("<>", UNARYOPERATOR, "SomeWorlds"),
-  new Token("AND", BINARYOPERATOR, "And"),
-  new Token("&&", BINARYOPERATOR, "And"),
-  new Token("OR", BINARYOPERATOR, "Or"),
-  new Token("||", BINARYOPERATOR, "Or")
+  new Token(/^->/, BINARYOPERATOR, "Then", "->"),
+  new Token(/^<->/, BINARYOPERATOR, "Iff", "<->"),
+  new Token(/^\(/, OPENPARENS, "Formula", "("),
+  new Token(/^\)/, CLOSEPARENS, "Formula", ")"),
+  new Token(/^!/, UNARYOPERATOR, "Not", "!"),
+  new Token(/^not/i, UNARYOPERATOR, "Not", "!"),
+  new Token(/^\[\]/, UNARYOPERATOR, "AllWorlds", "[]"),
+  new Token(/^<>/, UNARYOPERATOR, "SomeWorlds", "<>"),
+  new Token(/^AND/i, BINARYOPERATOR, "And", "AND"),
+  new Token(/^&&/, BINARYOPERATOR, "And", "&&"),
+  new Token(/^OR/i, BINARYOPERATOR, "Or", "OR"),
+  new Token(/^\|\|/, BINARYOPERATOR, "Or", "||"),
+  new Token(/^[a-zA-Z0-9]+/, VARIABLE, "Variable", "Var")
 ];

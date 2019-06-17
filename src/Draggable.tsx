@@ -6,7 +6,10 @@ interface IProps {
 }
 
 const Draggable = (props: IProps) => {
-  const [position, setPosition] = React.useState({ x: 0, y: 0 });
+  const [position, setPosition] = React.useState({
+    x: window.innerWidth * 0.25,
+    y: 0
+  });
   const [clickLocation, setClickLocation] = React.useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = React.useState(false);
 
@@ -25,14 +28,15 @@ const Draggable = (props: IProps) => {
     }
   };
 
-  const newStyle = { left: position.x + "px", top: position.y + "px" };
+  //   const newStyle = { left: position.x + "px", top: position.y + "px" };
 
   return (
+    //   style={newStyle}
     <svg
       className={styles.draggable}
+      viewBox={`${-position.x} ${-position.y} ${2500} 1500`}
       width={window.innerWidth}
-      height={5000}
-      style={newStyle}
+      height={window.innerHeight}
       onMouseDown={startDrag}
       onMouseUp={stopDrag}
       onMouseMove={mouseMove}

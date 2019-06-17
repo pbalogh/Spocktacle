@@ -8,7 +8,6 @@ import {
   UNARYOPERATOR,
   VARIABLE
 } from "./Constants";
-import { Variable } from "./formulae/Variable";
 import Pattern from "./Pattern";
 import { allKnownTokens, IMatchable, Token } from "./Token";
 
@@ -192,6 +191,7 @@ const defaultState = {
 };
 
 export default class LogicParser {
+  public whitespaceRegex = RegExp(/^\s/);
   public formulae: IMatchable[];
   public foundAMatch: boolean = false;
   constructor(public sentence: string, state: IStateDelta = defaultState) {
@@ -383,37 +383,32 @@ export default class LogicParser {
     if (sentence.length < 1) {
       return [];
     }
-    console.log("In tokenizeSentence, sentence is ", sentence);
+
+    const whitespaceAtBeginning = this.whitespaceRegex.exec(sentence);
+    if (whitespaceAtBeginning) {
+      return this.tokenizeSentence(
+        sentence.slice(whitespaceAtBeginning[0].length)
+      );
+    }
 
     let matchedToken: Token;
     let restOfSentence: string;
 
     for (const token of allKnownTokens) {
-      // We only care if we're matching the front of the sentence.
-      const stringToMatch: string =
-        typeof token.elements === "string" ? token.elements : "#";
-      if (sentence.indexOf(stringToMatch) === 0) {
+      const match = token.regex.exec(sentence);
+      if (match) {
         matchedToken = new Token(
-          sentence.slice(0, token.elements.length),
+          token.regex,
           token.syntaxmatch,
-          token.className
+          token.className,
+          match[0]
         );
-        restOfSentence = sentence.substring(token.elements.length);
+        restOfSentence = sentence.substring(match[0].length);
         // Here it is: one array, with our (known) match up front
         // and our (unknown) future matches following.
         return [matchedToken, ...this.tokenizeSentence(restOfSentence)];
       }
     }
-    // This is an interesting thing -- we didn't match any of our tokens.
-    // Since our convention is that a variable name can only be one character long,
-    // we can safely make the assumption
-    // that the unmatchable character at the front of our sentence
-    // was a variable name.
-
-    matchedToken = new Token(sentence.charAt(0), VARIABLE, Variable);
-    restOfSentence = sentence.substring(1);
-    // Here it is: one array, with our (known) match up front
-    // and our (unknown) future matches following.
-    return [matchedToken, ...this.tokenizeSentence(restOfSentence)];
+    return [];
   }
 }

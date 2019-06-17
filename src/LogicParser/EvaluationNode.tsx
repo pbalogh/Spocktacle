@@ -257,6 +257,54 @@ export default class EvaluationNode {
 
 /*
 
+June 6, ride to work
+
+Got sidetracked on trying to solve k-sat in polynomial time (yep, bonkers)
+with an approximation based on each number's possibility space in a truth table
+as a stream of 1s and 0s.
+
+A disjuntion (OR) just finds holes (0s) that cut across all its members.
+
+A conjunction (AND) picks up on all holes and keeps them.
+
+So if you had a way to approximate where all possible holes are in each disjunction,
+you could tell very quickly if it makes a first pass through the conjunction 
+IF all possible holes don't add up to the entire stream of numbers.
+
+The idea is viewing each variable as a rectified sine wave (positive -> 1, negative -> 0)
+and you're doing waveform addition for OR
+and softmin for AND.
+
+Higher-frequency waves have the most holes (in number, not total size)
+so are a reasonable place to focus.
+
+A wave in one clause that's negated in another is basically saying
+"there could be holes everywhere".
+
+But then that just means you need to use the next-highest-frequency wave in each clause,
+since that would be filling the holes left by the highest-frequency wave.
+
+If that wave is negated in another clause, then you need to keep looking.
+
+The interesting part is what things look like when all your waves 
+are negated in at least one clause, which presumably is the case.
+
+
+
+Just had a reasonably big thought about Kripke worlds:
+
+humans create our own modal logic graphs on the fly, and dispose of them when we're done.
+
+When we're in a room with objects, we create a graph based on accessibility of rules
+(based on relevance, painfulness or importance of previous similar experiences, etc.)
+and then look for information to build up that short-term graph.
+
+Then, when our circumstances change, we drop nodes from that short-term graph and add new ones.
+
+A lot like rendering engines using a binary tree or quadtree to determine what to render.
+
+
+
 May 23, ride to work
 
 Realize that I should be memoizing my toBeFalse and toBeTrue results for each Formula.
